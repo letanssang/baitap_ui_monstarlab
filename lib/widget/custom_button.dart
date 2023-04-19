@@ -4,13 +4,14 @@ class CustomButton extends StatelessWidget {
   final Widget child;
   final Function() onTap;
   final bool enable;
-
-  const CustomButton({required this.child, required this.onTap, this.enable = false, Key? key})
+  final double? width;
+  const CustomButton({required this.child, required this.onTap, this.enable = false,this.width, Key? key})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 58,
+      width: width ?? MediaQuery.of(context).size.width - 60,
       child: GestureDetector(
         onTap: enable ? onTap : null,
         child: Container(

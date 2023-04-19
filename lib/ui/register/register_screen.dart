@@ -36,6 +36,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _agreeTerm = false;
   File? _image;
   bool _obscureText = true;
+  final FocusNode _phonenumberFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _usernameFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _confirmPasswordFocusNode = FocusNode();
 
   bool validateEmail(String email) {
     const String regex = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
@@ -117,212 +122,234 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _emailController.text = message;
     }
   }
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _phonenumberFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _usernameFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: YellowBackground(
-      child: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.arrow_back),
-                ),
-                const Text(
-                  'Register  ',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(top: 16),
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30)),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CustomTextField(
-                              keyboardType: TextInputType.phone,
-                              textInputAction: TextInputAction.next,
-                              controller: _phonenumberController,
-                              labelText: 'Phone Number',
-                              hintText: 'Phone Number',
-                              maxlength: 10,
-                              onChanged: (value) {
-                                setState(() {
-                                  _phonenumber = value;
-                                });
-                              },
-                              icon: const Icon(Icons.phone_android_outlined)),
-                          Container(
-                            width: 55,
-                            height: 55,
-                            margin: const EdgeInsets.only(left: 45),
-                            decoration: const BoxDecoration(),
-                            child: _image != null
-                                ? ClipOval(
-                                    child: Image.file(
-                                    _image!,
-                                    fit: BoxFit.cover,
-                                  ))
-                                : IconButton(
-                                    onPressed: showImagePicker,
-                                    icon: SvgPicture.asset(
-                                        'assets/images/add_image.svg')),
-                          )
-                        ],
-                      ),
-                      CustomTextField(
-                        errorText: _emailValid ? null : 'Invalid email',
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        controller: _emailController,
-                        labelText: 'Email',
-                        hintText: 'Email',
-                        onChanged: (value) {
-                          setState(() {
-                            _email = value;
-                            _emailValid = validateEmail(_email);
-                          });
-                        },
-                        icon: const Icon(Icons.person),
-                      ),
-                      CustomTextField(
-                        errorText: _usernameValid ? null : 'Invalid username',
-                        keyboardType: TextInputType.name,
-                        textInputAction: TextInputAction.next,
-                        controller: _usernameController,
-                        labelText: 'Username',
-                        hintText: 'Username',
-                        onChanged: (value) {
-                          setState(() {
-                            _username = value;
-                            _usernameValid = validateUsername(_username);
-                          });
-                        },
-                        icon: const Icon(Icons.person),
-                      ),
-                      CustomTextField(
-                          errorText: _passwordValid ? null : 'Invalid password',
-                          showPassword: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                          obscureText: _obscureText,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.next,
-                          controller: _passwordController,
-                          labelText: 'Password',
-                          hintText: 'Password',
-                          onChanged: (value) {
-                            setState(() {
-                              _password = value;
-                              _passwordValid = validatePassword(_password);
-                            });
-                          },
-                          icon: _obscureText
-                              ? const Icon(Icons.visibility_off_outlined)
-                              : const Icon(Icons.visibility_outlined)),
-                      CustomTextField(
-                          errorText:
-                              _confirmPassword == _password ? null : 'Not match',
-                          showPassword: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                          obscureText: _obscureText,
-                          keyboardType: TextInputType.visiblePassword,
-                          textInputAction: TextInputAction.done,
-                          controller: _confirmPasswordController,
-                          labelText: 'Confirm Password',
-                          hintText: 'Confirm Password',
-                          onChanged: (value) {
-                            setState(() {
-                              _confirmPassword = value;
-                            });
-                          },
-                          icon: _obscureText
-                              ? const Icon(Icons.visibility_off_outlined)
-                              : const Icon(Icons.visibility_outlined)),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+          body: YellowBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                  ),
+                  const Text(
+                    'Register  ',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Checkbox(
-                                value: _agreeTerm,
+                            CustomTextField(
+                                nextFocusNode: _emailFocusNode,
+                                focusNode: _phonenumberFocusNode,
+                                keyboardType: TextInputType.phone,
+                                textInputAction: TextInputAction.next,
+                                controller: _phonenumberController,
+                                labelText: 'Phone Number',
+                                hintText: 'Phone Number',
+                                maxlength: 10,
                                 onChanged: (value) {
                                   setState(() {
-                                    _agreeTerm = !_agreeTerm;
+                                    _phonenumber = value;
                                   });
-                                }),
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: const TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'I agree to the ',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: 'term of use',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFFFFB900),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                },
+                                icon: const Icon(Icons.phone_android_outlined)),
+                            Container(
+                              width: 55,
+                              height: 55,
+                              margin: const EdgeInsets.only(left: 45),
+                              decoration: const BoxDecoration(),
+                              child: _image != null
+                                  ? ClipOval(
+                                      child: Image.file(
+                                      _image!,
+                                      fit: BoxFit.cover,
+                                    ))
+                                  : IconButton(
+                                      onPressed: showImagePicker,
+                                      icon: SvgPicture.asset(
+                                          'assets/images/add_image.svg')),
+                            )
                           ],
                         ),
-                      ),
+                        CustomTextField(
+                          focusNode: _emailFocusNode,
+                          errorText: _emailValid ? null : 'Invalid email',
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          controller: _emailController,
+                          labelText: 'Email',
+                          hintText: 'Email',
+                          onChanged: (value) {
+                            setState(() {
+                              _email = value;
+                              _emailValid = validateEmail(_email);
+                            });
+                          },
+                          icon: const Icon(Icons.person),
+                        ),
+                        CustomTextField(
+                          focusNode: _usernameFocusNode,
+                          errorText: _usernameValid ? null : 'Invalid username',
+                          keyboardType: TextInputType.name,
+                          textInputAction: TextInputAction.next,
+                          controller: _usernameController,
+                          labelText: 'Username',
+                          hintText: 'Username',
+                          onChanged: (value) {
+                            setState(() {
+                              _username = value;
+                              _usernameValid = validateUsername(_username);
+                            });
+                          },
+                          icon: const Icon(Icons.person),
+                        ),
+                        CustomTextField(
+                            nextFocusNode: _confirmPasswordFocusNode,
+                            focusNode: _passwordFocusNode,
+                            errorText: _passwordValid ? null : 'Invalid password',
+                            showPassword: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            obscureText: _obscureText,
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.next,
+                            controller: _passwordController,
+                            labelText: 'Password',
+                            hintText: 'Password',
+                            onChanged: (value) {
+                              setState(() {
+                                _password = value;
+                                _passwordValid = validatePassword(_password);
+                              });
+                            },
+                            icon: _obscureText
+                                ? const Icon(Icons.visibility_off_outlined)
+                                : const Icon(Icons.visibility_outlined)),
+                        CustomTextField(
+                            focusNode: _confirmPasswordFocusNode,
+                            errorText:
+                                _confirmPassword == _password ? null : 'Not match',
+                            showPassword: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
+                            obscureText: _obscureText,
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.done,
+                            controller: _confirmPasswordController,
+                            labelText: 'Confirm Password',
+                            hintText: 'Confirm Password',
+                            onChanged: (value) {
+                              setState(() {
+                                _confirmPassword = value;
+                              });
+                            },
+                            icon: _obscureText
+                                ? const Icon(Icons.visibility_off_outlined)
+                                : const Icon(Icons.visibility_outlined)),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Checkbox(
+                                  value: _agreeTerm,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _agreeTerm = !_agreeTerm;
+                                    });
+                                  }),
+                              RichText(
+                                textAlign: TextAlign.center,
+                                text: const TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'I agree to the ',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: 'term of use',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFFFFB900),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                      CustomButton(
-                          enable: _emailValid &&
-                              _usernameValid &&
-                              _passwordValid &&
-                              _confirmPassword == _password &&
-                              _email.isNotEmpty &&
-                              _password.isNotEmpty &&
-                              _agreeTerm,
-                          child: Text('Sign Up',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)
-                          ), onTap: onSignUpButtonPressed),
-                    ],
+                        CustomButton(
+                            enable: _emailValid &&
+                                _usernameValid &&
+                                _passwordValid &&
+                                _confirmPassword == _password &&
+                                _email.isNotEmpty &&
+                                _password.isNotEmpty &&
+                                _agreeTerm,
+                            child: Text('Sign Up',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)
+                            ), onTap: onSignUpButtonPressed),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 }

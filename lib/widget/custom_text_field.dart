@@ -13,6 +13,8 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final int? maxlength;
   final VoidCallback? showPassword;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
   const CustomTextField({
     required this.controller,
     this.labelText = '',
@@ -25,6 +27,8 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.maxlength,
     this.showPassword,
+    this.focusNode,
+    this.nextFocusNode,
     Key? key}) : super(key: key);
 
   @override
@@ -38,6 +42,12 @@ class CustomTextField extends StatelessWidget {
           color: Color(0xFF515151),
           fontSize: 18,
         ),
+        onSubmitted: (value) {
+          if (nextFocusNode != null) {
+            FocusScope.of(context).requestFocus(nextFocusNode);
+          }
+        },
+        focusNode: focusNode,
         maxLength: maxlength,
         obscureText: obscureText,
         controller: controller,
